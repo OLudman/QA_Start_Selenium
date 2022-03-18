@@ -6,11 +6,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ChangeAvatarTest extends TestBase{
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void preCondition(){
-        app.getUser().initLogin();
-        app.getUser().fillLoginForm(Auth.builder().email("olgaludman@gmail.com").password("mK#J7a#mDU6.9Gz").build());
-        app.getUser().submitLogin();
+        if (app.getUser().isLoginButtonPresent()) {
+            app.getUser().initLogin();
+            app.getUser().fillLoginForm(Auth.builder().email("olgaludman@gmail.com").password("mK#J7a#mDU6.9Gz").build());
+            app.getUser().submitLogin();
+        }
     }
 
     @Test
@@ -22,6 +24,8 @@ public class ChangeAvatarTest extends TestBase{
         Assert.assertTrue(app.getUser().getURL().contains("https://id.atlassian.com/manage-profile"));
         app.getUser().initChangePhoto();
         app.getUser().uploadPhoto("C:\\Users\\vanan\\Desktop\\qa telran myproject\\QA_Start_Selenium");
-//        app.getUser().returnToTrelloFromAtlassian();
+        Assert.assertTrue(app.getUser().isAvatarChanged());
+        app.getUser().returnToTrelloFromAtlassian();
+        Assert.assertTrue(app.getUser().getURL().contains("https://trello.com"));
     }
 }

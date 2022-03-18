@@ -3,11 +3,16 @@ package manager;
 import models.Auth;
 import models.User;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserHelper extends HelperBase {
     public UserHelper(WebDriver wd) {
@@ -17,6 +22,17 @@ public class UserHelper extends HelperBase {
     public void initLogin(){
         if(wd.findElement(By.cssSelector("[href='/login']")).isDisplayed())
             click(By.cssSelector("[href='/login']"));
+    }
+
+    public void fillLoginFormTestTest(String email, String password){
+        WebElement inputEmail = wd.findElement(By.id("user"));
+        inputEmail.sendKeys("hatum.testing");
+        inputEmail.sendKeys(Keys.chord(Keys.SHIFT, "2"));//push 2 buttons, =@
+        inputEmail.sendKeys(Keys.BACK_SPACE);
+        inputEmail.sendKeys("gmail.com");
+        click(By.id("login"));
+        pause(2000);
+        type(By.id("password"), password);
     }
 
     public void fillLoginForm(String email, String password){
@@ -105,5 +121,20 @@ public class UserHelper extends HelperBase {
     public void uploadPhoto(String url) {
         wd.findElement(By.id("image-input")).sendKeys(url);
         click(By.xpath("//button[.='Upload']"));
+    }
+
+    public boolean isAvatarChanged() {
+        new WebDriverWait(wd,10)
+                .until(ExpectedConditions.visibilityOf(wd.findElement(By.cssSelector(".css-ygd4ga"))));
+        return wd.findElement(By.xpath("//span[text()='Avatar added']")).getText().equals("Avatar added");
+    }
+
+    public void returnToTrelloFromAtlassian() {
+        List<String> tabs = new ArrayList<>(wd.getWindowHandles());
+        wd.switchTo().window(tabs.get(0));
+    }
+
+    public boolean isLoginButtonPresent() {
+        return isElementPresent(By.cssSelector("[href='/login']"));
     }
 }

@@ -1,5 +1,6 @@
 package test;
 
+import manager.MyDataProvider;
 import models.Auth;
 import models.User;
 import org.openqa.selenium.By;
@@ -10,7 +11,7 @@ import org.testng.annotations.Test;
 
 public class LoginTests extends TestBase{
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void preCondition(){
         if (app.getUser().isLogged()){
             app.getUser().logout();
@@ -36,20 +37,24 @@ public class LoginTests extends TestBase{
 //        Assert.assertTrue(wd.findElement(By.cssSelector("[aria-label='Open member menu']")).isDisplayed());
 //    }
 
-    @Test
-    public void LoginSuccessNew(){
+    @Test(dataProvider = "loginValidData",dataProviderClass = MyDataProvider.class)
+    public void LoginSuccessNew(String email, String password){
         app.getUser().initLogin();
-        app.getUser().fillLoginForm("olgaludman@gmail.com", "mK#J7a#mDU6.9Gz");
+//        app.getUser().fillLoginForm("olgaludman@gmail.com", "mK#J7a#mDU6.9Gz");
+        app.getUser().fillLoginForm(email, password);
         app.getUser().submitLogin();
 
         Assert.assertTrue(app.getUser().isAvatarPresent());
     }
 
-    @Test
-    public void LoginSuccessNewModel(){
+    @Test (dataProvider = "loginValidDataUser", dataProviderClass = MyDataProvider.class, groups = {"web"})
+    public void LoginSuccessNewModel(User user){
+        logger.info("Test starts with email : "+ user.getEmail() + " and password: "+ user.getPassword());
+        //should be User toString
 
         app.getUser().initLogin();
-        app.getUser().fillLoginForm(new User().withEmail("olgaludman@gmail.com").withPassword("mK#J7a#mDU6.9Gz"));
+        app.getUser().fillLoginForm(user.getEmail(), user.getPassword());
+//        app.getUser().fillLoginForm(new User().withEmail("olgaludman@gmail.com").withPassword("mK#J7a#mDU6.9Gz"));
         app.getUser().submitLogin();
 
         Assert.assertTrue(app.getUser().isAvatarPresent());
